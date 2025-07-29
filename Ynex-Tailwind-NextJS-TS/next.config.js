@@ -16,6 +16,13 @@ const nextConfig = {
   images: {
     loader: "imgix",
     path: "/",
+    unoptimized: true,
+  },
+  compress: true,
+  poweredByHeader: false,
+  generateEtags: false,
+  experimental: {
+    optimizeCss: true,
   },
 };
 
