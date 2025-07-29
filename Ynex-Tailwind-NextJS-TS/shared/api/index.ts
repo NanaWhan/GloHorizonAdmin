@@ -1,29 +1,23 @@
-// GloHorizon API - Main Export File
+// GloHorizon API - Main Export
 
-// Configuration
-export { API_CONFIG, REQUEST_TIMEOUT, TOKEN_KEYS } from './config';
-export type { ApiResponse, PaginatedResponse } from './config';
+import { apiClient } from './client'
+import { AuthService } from './services/auth'
+import { BookingService } from './services/bookings'
+import { DashboardService } from './services/dashboard'
 
-// API Client
-export { apiClient } from './client';
+// Export API client instance
+export { apiClient }
 
-// Types
-export * from './types';
+// Export all services
+export {
+  AuthService,
+  BookingService,
+  DashboardService
+}
 
-// Services
-export { authService } from './services/auth';
-export { bookingService } from './services/booking';
-export { paymentService } from './services/payment';
+// Export types
+export * from './config'
+export * from '../types/glohorizon'
 
-// Service instances for convenience
-import { authService } from './services/auth';
-import { bookingService } from './services/booking';
-import { paymentService } from './services/payment';
-
-export const gloHorizonApi = {
-  auth: authService,
-  bookings: bookingService,
-  payments: paymentService
-};
-
-export default gloHorizonApi;
+// Initialize API client on module load
+console.log('🌍 GloHorizon Travel API initialized')

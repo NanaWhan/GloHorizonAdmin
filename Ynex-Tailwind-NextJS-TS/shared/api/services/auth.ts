@@ -1,168 +1,70 @@
 // GloHorizon Authentication Service
 
-import { apiClient } from '../client';
-import { API_CONFIG, TOKEN_KEYS } from '../config';
-import { User, LoginRequest, LoginResponse } from '../types';
+import { apiClient } from '../client'
+import { LoginRequest, LoginResponse, AdminUser } from '../config'
 
-class AuthService {
-  
-  // Login user
-  async login(credentials: LoginRequest): Promise<LoginResponse> {
-    try {
-      const response = await apiClient.post<LoginResponse>(
-        API_CONFIG.ENDPOINTS.AUTH.LOGIN,
-        credentials
-      );
+export class AuthService {
 
-      if (response.success && response.data) {
-        // Store tokens and user data
-        this.storeAuthData(response.data);
-        return response.data;
+  // Admin login
+  static async login(credentials: LoginRequest): Promise<LoginResponse> {
+    const response = await apiClient.post<LoginResponse>('/admin/login', credentials)
+
+    if (response.data?.success && response.data.token) {
+      // Store auth data
+      apiClient.setAccessToken(response.data.token)
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('adminUser', JSON.stringify(response.data.user))
       }
 
-      throw new Error(response.message || 'Login failed');
-    } catch (error) {
-      console.error('Login error:', error);
-      throw error;
+      return response.data
     }
+
+    throw new Error(response.data?.message || 'Login failed')
   }
 
-  // Register new user
-  async register(userData: {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-  }): Promise<LoginResponse> {
-    try {
-      const response = await apiClient.post<LoginResponse>(
-        API_CONFIG.ENDPOINTS.AUTH.REGISTER,
-        userData
-      );
-
-      if (response.success && response.data) {
-        this.storeAuthData(response.data);
-        return response.data;
-      }
-
-      throw new Error(response.message || 'Registration failed');
-    } catch (error) {
-      console.error('Registration error:', error);
-      throw error;
-    }
-  }
-
-  // Get current user profile
-  async getProfile(): Promise<User> {
-    try {
-      const response = await apiClient.get<User>(
-        API_CONFIG.ENDPOINTS.AUTH.PROFILE
-      );
-
-      if (response.success && response.data) {
-        return response.data;
-      }
-
-      throw new Error(response.message || 'Failed to fetch profile');
-    } catch (error) {
-      console.error('Get profile error:', error);
-      throw error;
-    }
-  }
-
-  // Refresh access token
-  async refreshToken(): Promise<string> {
-    try {
-      const refreshToken = this.getRefreshToken();
-      if (!refreshToken) {
-        throw new Error('No refresh token available');
-      }
-
-      const response = await apiClient.post<{ accessToken: string }>(
-        API_CONFIG.ENDPOINTS.AUTH.REFRESH,
-        { refreshToken }
-      );
-
-      if (response.success && response.data) {
-        apiClient.setAccessToken(response.data.accessToken);
-        return response.data.accessToken;
-      }
-
-      throw new Error(response.message || 'Token refresh failed');
-    } catch (error) {
-      console.error('Token refresh error:', error);
-      this.logout(); // Force logout on refresh failure
-      throw error;
-    }
-  }
-
-  // Logout user
-  async logout(): Promise<void> {
-    try {
-      await apiClient.post(API_CONFIG.ENDPOINTS.AUTH.LOGOUT);
-    } catch (error) {
-      console.error('Logout error:', error);
-    } finally {
-      // Always clear local storage regardless of API call success
-      this.clearAuthData();
-    }
-  }
-
-  // Store authentication data in local storage
-  private storeAuthData(authData: LoginResponse): void {
+  // Get current admin user
+  static getCurrentUser(): AdminUser | null {
     if (typeof window !== 'undefined') {
-      localStorage.setItem(TOKEN_KEYS.ACCESS_TOKEN, authData.accessToken);
-      localStorage.setItem(TOKEN_KEYS.REFRESH_TOKEN, authData.refreshToken);
-      localStorage.setItem(TOKEN_KEYS.USER_DATA, JSON.stringify(authData.user));
-      
-      // Set token in API client
-      apiClient.setAccessToken(authData.accessToken);
+      const userData = localStorage.getItem('adminUser')
+      return userData ? JSON.parse(userData) : null
     }
-  }
-
-  // Clear authentication data
-  private clearAuthData(): void {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(TOKEN_KEYS.ACCESS_TOKEN);
-      localStorage.removeItem(TOKEN_KEYS.REFRESH_TOKEN);
-      localStorage.removeItem(TOKEN_KEYS.USER_DATA);
-    }
-    apiClient.removeTokens();
-  }
-
-  // Get stored refresh token
-  private getRefreshToken(): string | null {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem(TOKEN_KEYS.REFRESH_TOKEN);
-    }
-    return null;
+    return null
   }
 
   // Check if user is authenticated
-  isAuthenticated(): boolean {
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem(TOKEN_KEYS.ACCESS_TOKEN);
-      return !!token;
-    }
-    return false;
+  static isAuthenticated(): boolean {
+    return !!apiClient.getAccessToken()
   }
 
-  // Get stored user data
-  getCurrentUser(): User | null {
+  // Logout
+  static logout(): void {
+    apiClient.removeTokens()
+
     if (typeof window !== 'undefined') {
-      const userData = localStorage.getItem(TOKEN_KEYS.USER_DATA);
-      return userData ? JSON.parse(userData) : null;
+      // Redirect to login page
+      window.location.href = '/admin/login'
     }
-    return null;
   }
 
-  // Check if user has admin role
-  isAdmin(): boolean {
-    const user = this.getCurrentUser();
-    return user?.role === 'admin';
+  // Validate token (check if still valid)
+  static async validateToken(): Promise<boolean> {
+    try {
+      // Try to make an authenticated request
+      const response = await apiClient.get('/admin/dashboard')
+      return response.success
+    } catch (error) {
+      return false
+    }
+  }
+
+  // Create new admin account (for initial setup)
+  static async createAdmin(data: {
+    fullName: string
+    email: string
+    password: string
+    phoneNumber: string
+  }): Promise<void> {
+    await apiClient.post('/admin/create', data)
   }
 }
-
-// Export singleton instance
-export const authService = new AuthService();
-export default authService;

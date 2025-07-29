@@ -1,7 +1,7 @@
 
 import React, { Fragment, useState, useEffect } from "react";
 import { connect } from "react-redux";
-import MenuItems from "./nav";
+import { MenuItems } from "./nav";
 import { ThemeChanger } from "../../redux/action";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -562,13 +562,13 @@ const Sidebar = ({ local_varaiable, ThemeChanger }: any) => {
 			<aside className="app-sidebar sticky" id="sidebar" onMouseOver={() => Onhover()}
 				onMouseLeave={() => Outhover()}>
 				<div className="main-sidebar-header">
-					<Link href="/components/dashboards/crm/" className="header-logo">
-						<img src={`${process.env.NODE_ENV === "production" ? basePath : ""}/assets/images/brand-logos/desktop-logo.png`} alt="logo" className="main-logo desktop-logo"/>
-						<img src={`${process.env.NODE_ENV === "production" ? basePath : ""}/assets/images/brand-logos/toggle-logo.png`} alt="logo" className="main-logo toggle-logo"/>
-						<img src={`${process.env.NODE_ENV === "production" ? basePath : ""}/assets/images/brand-logos/desktop-dark.png`} alt="logo" className="main-logo desktop-dark"/>
-						<img src={`${process.env.NODE_ENV === "production" ? basePath : ""}/assets/images/brand-logos/toggle-dark.png`} alt="logo" className="main-logo toggle-dark"/>
-						<img src={`${process.env.NODE_ENV === "production" ? basePath : ""}/assets/images/brand-logos/desktop-white.png`} alt="logo" className="main-logo desktop-white"/>
-						<img src={`${process.env.NODE_ENV === "production" ? basePath : ""}/assets/images/brand-logos/toggle-white.png`} alt="logo" className="main-logo toggle-white"/>
+					<Link href="/glohorizon/dashboard" className="header-logo">
+						<img src={`${process.env.NODE_ENV === "production" ? basePath : ""}/assets/images/global-horizon/glo.png`} alt="Global Horizon Travel and Tour" className="main-logo desktop-logo" style={{height: '40px', width: 'auto'}}/>
+						<img src={`${process.env.NODE_ENV === "production" ? basePath : ""}/assets/images/global-horizon/glo.png`} alt="Global Horizon Travel and Tour" className="main-logo toggle-logo" style={{height: '32px', width: 'auto'}}/>
+						<img src={`${process.env.NODE_ENV === "production" ? basePath : ""}/assets/images/global-horizon/glo.png`} alt="Global Horizon Travel and Tour" className="main-logo desktop-dark" style={{height: '40px', width: 'auto'}}/>
+						<img src={`${process.env.NODE_ENV === "production" ? basePath : ""}/assets/images/global-horizon/glo.png`} alt="Global Horizon Travel and Tour" className="main-logo toggle-dark" style={{height: '32px', width: 'auto'}}/>
+						<img src={`${process.env.NODE_ENV === "production" ? basePath : ""}/assets/images/global-horizon/glo.png`} alt="Global Horizon Travel and Tour" className="main-logo desktop-white" style={{height: '40px', width: 'auto'}}/>
+						<img src={`${process.env.NODE_ENV === "production" ? basePath : ""}/assets/images/global-horizon/glo.png`} alt="Global Horizon Travel and Tour" className="main-logo toggle-white" style={{height: '32px', width: 'auto'}}/>
 
 					</Link>
 				</div>

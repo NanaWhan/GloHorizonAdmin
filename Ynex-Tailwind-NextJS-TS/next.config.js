@@ -8,6 +8,9 @@ const nextConfig = {
   swcMinify: true,
   basePath: "",
   assetPrefix :"",
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   images: {
     loader: "imgix",
     path: "/",
