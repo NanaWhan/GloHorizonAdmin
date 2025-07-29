@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build 2>&1 | findstr /V /C:\"API routes and middleware\"",
-    "generate": "next build && if not exist \".output\\public\" mkdir \".output\\public\" && xcopy \"out\\*\" \".output\\public\\\" /E /I /Y",
+    "generate": "next build && powershell -Command \"New-Item -ItemType Directory -Force -Path '.output/public' | Out-Null; Copy-Item -Path 'out/*' -Destination '.output/public/' -Recurse -Force\"",
     "start": "next start",
     "lint": "next lint",
     "postcss": "sass ./public/assets/scss/style.scss ./public/assets/css/style.css && postcss ./public/assets/css/style.css -o ./public/assets/css/style.css",
