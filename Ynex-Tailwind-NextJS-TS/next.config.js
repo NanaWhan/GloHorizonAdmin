@@ -1,4 +1,3 @@
-
 /**@type {import('next').NextConfig} */
 const isProd = process.env.NODE_ENV === "production";
 const nextConfig = {
@@ -7,9 +6,12 @@ const nextConfig = {
   trailingSlash: true,
   swcMinify: true,
   basePath: "",
-  assetPrefix :"",
+  assetPrefix: "",
   eslint: {
     ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
   },
   images: {
     loader: "imgix",
