@@ -6,6 +6,11 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# NPM cache and logs
+.npm/
+*-debug-*.log
+*-eresolve-report.txt
+
 # Runtime data
 pids
 *.pid
@@ -82,7 +87,7 @@ dist
 
 # Gatsby files
 .cache/
-public
+# public - Commented out for Next.js project
 
 # Vuepress build output
 .vuepress/dist
